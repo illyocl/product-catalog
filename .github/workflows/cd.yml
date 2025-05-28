@@ -26,6 +26,7 @@ jobs:
 
       - name: Dry-run Deploy to staging
         run: |
+          # Sadece client‐side simulate, gerçek API'ye bağlanılmaz
           kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml -n staging
           kubectl apply --dry-run=client --validate=false -f k8s/service.yaml    -n staging
 
