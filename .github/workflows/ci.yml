@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: crazy-max/ghaction-html-validator@v1
+      - uses: crazy-max/ghaction-html-validator@v1.0.4
         with:
           path: '*.html'
 
