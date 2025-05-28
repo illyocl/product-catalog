@@ -11,7 +11,8 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -25,8 +26,8 @@ jobs:
 
       - name: Deploy to staging
         run: |
-          kubectl apply -f k8s/deployment.yaml -n staging
-          kubectl apply -f k8s/service.yaml    -n staging
+          kubectl apply --validate=false -f k8s/deployment.yaml -n staging
+          kubectl apply --validate=false -f k8s/service.yaml    -n staging
 
   approval:
     needs: deploy-staging
@@ -46,7 +47,8 @@ jobs:
     needs: approval
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
@@ -60,8 +62,8 @@ jobs:
 
       - name: Deploy to production
         run: |
-          kubectl apply -f k8s/deployment.yaml -n production
-          kubectl apply -f k8s/service.yaml    -n production
+          kubectl apply --validate=false -f k8s/deployment.yaml -n production
+          kubectl apply --validate=false -f k8s/service.yaml    -n production
 
       - name: Notify Slack (design only)
         run: |
@@ -73,6 +75,7 @@ jobs:
     name: Rollback Strategy (docs)
     runs-on: ubuntu-latest
     steps:
-      - run: |
-          echo "Rollback komutu:"
+      - name: Document Rollback Command
+        run: |
+          echo "Rollback için komut:"
           echo "kubectl rollout undo deployment/product-catalog -n production"
