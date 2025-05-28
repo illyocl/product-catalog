@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Catalog</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Ürün Kataloğu</h1>
+  <div id="products"></div>
+  <script>
+    fetch('products.json')
+      .then(r => r.json())
+      .then(products => {
+        const container = document.getElementById('products');
+        products.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'product-card';
+          card.innerHTML = `
+            <h2>${p.name}</h2>
+            <p>Fiyat: ₺${p.price.toFixed(2)}</p>
+          `;
+          container.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>
