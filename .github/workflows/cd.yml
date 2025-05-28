@@ -24,10 +24,10 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
 
-      - name: Deploy to staging
+      - name: Dry-run Deploy to staging
         run: |
-          kubectl apply --validate=false -f k8s/deployment.yaml -n staging
-          kubectl apply --validate=false -f k8s/service.yaml    -n staging
+          kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml -n staging
+          kubectl apply --dry-run=client --validate=false -f k8s/service.yaml    -n staging
 
   approval:
     needs: deploy-staging
@@ -60,10 +60,10 @@ jobs:
           echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > kubeconfig
           export KUBECONFIG=$PWD/kubeconfig
 
-      - name: Deploy to production
+      - name: Dry-run Deploy to production
         run: |
-          kubectl apply --validate=false -f k8s/deployment.yaml -n production
-          kubectl apply --validate=false -f k8s/service.yaml    -n production
+          kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml -n production
+          kubectl apply --dry-run=client --validate=false -f k8s/service.yaml    -n production
 
       - name: Notify Slack (design only)
         run: |
