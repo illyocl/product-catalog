@@ -19,22 +19,17 @@ jobs:
           echo "Simulating: kubectl apply --validate=false -f k8s/deployment.yaml -n staging"
           echo "Simulating: kubectl apply --validate=false -f k8s/service.yaml    -n staging"
 
-  approval:
+  pause-for-approval:
     needs: deploy-staging
     runs-on: ubuntu-latest
-    outputs:
-      approved: ${{ steps.wait_for_approval.outputs.approved }}
     steps:
-      - name: Manual Approval
-        id: wait_for_approval
-        uses: hmarr/auto-approve-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          message: "Staging başarılı. Production’a geçiş için onay ver?"
+      - name: **MANUAL APPROVAL REQUIRED**
+        run: |
+          echo "Waiting for manual approval to proceed to production..."
+          # Bu adım tasarımda, gerçek onay burada alınacak
 
   deploy-production:
-    if: ${{ needs.approval.outputs.approved == 'true' }}
-    needs: approval
+    needs: pause-for-approval
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,5 +52,5 @@ jobs:
     steps:
       - name: Document Rollback Command
         run: |
-          echo "Rollback için komut:"
+          echo "Rollback komutu:"
           echo "kubectl rollout undo deployment/product-catalog -n production"
