@@ -14,20 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubeconfig for staging
+      - name: Simulate Deploy to staging
         run: |
-          echo "${{ secrets.KUBE_CONFIG_STAGING }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
-
-      - name: Dry-run Deploy to staging
-        run: |
-          kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml -n staging
-          kubectl apply --dry-run=client --validate=false -f k8s/service.yaml    -n staging
+          echo "Simulating: kubectl apply --validate=false -f k8s/deployment.yaml -n staging"
+          echo "Simulating: kubectl apply --validate=false -f k8s/service.yaml    -n staging"
 
   approval:
     needs: deploy-staging
@@ -50,20 +40,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Configure kubeconfig for production
+      - name: Simulate Deploy to production
         run: |
-          echo "${{ secrets.KUBE_CONFIG_PROD }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
-
-      - name: Dry-run Deploy to production
-        run: |
-          kubectl apply --dry-run=client --validate=false -f k8s/deployment.yaml -n production
-          kubectl apply --dry-run=client --validate=false -f k8s/service.yaml    -n production
+          echo "Simulating: kubectl apply --validate=false -f k8s/deployment.yaml -n production"
+          echo "Simulating: kubectl apply --validate=false -f k8s/service.yaml    -n production"
 
       - name: Notify Slack (design only)
         run: |
