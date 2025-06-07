@@ -1,4 +1,3 @@
-# product-catalog/.github/workflows/cd.yml
 name: CD
 
 on:
@@ -24,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Await manual approval
-        run: |
-          echo "Waiting for manual approval to proceed to production..."
-          # Bu adım tasarımda, gerçek onay burada alınacak
+        run: echo "Manual approval step placeholder. See 'environment' block in deploy-production."
 
   deploy-production:
     needs: manual-approval
     runs-on: ubuntu-latest
+    environment:
+      name: production  # ← Bu ortam için GitHub'dan manuel onay gerekir
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,17 +39,18 @@ jobs:
           echo "Simulating: kubectl apply --validate=false -f k8s/deployment.yaml -n production"
           echo "Simulating: kubectl apply --validate=false -f k8s/service.yaml    -n production"
 
-      - name: Notify Slack (design only)
+      - name: Notify Slack
         run: |
           curl -X POST -H 'Content-type: application/json' \
             --data '{"text":"✅ product-catalog production’a deploy edildi."}' \
             ${{ secrets.SLACK_WEBHOOK_URL }}
 
-  rollback-strategy:
-    name: Rollback Strategy (docs)
+  rollback-on-failure:
+    needs: deploy-production
+    if: failure()
     runs-on: ubuntu-latest
     steps:
-      - name: Document Rollback Command
+      - name: Rollback Deployment
         run: |
-          echo "Rollback komutu:"
-          echo "kubectl rollout undo deployment/product-catalog -n production"
+          echo "❌ Deploy başarısız oldu, rollback başlatılıyor..."
+          kubectl rollout undo deployment/product-catalog -n production
